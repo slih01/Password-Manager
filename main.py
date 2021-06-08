@@ -49,10 +49,10 @@ def save():
                 # Reading old data
                 data = json.load(data_file)
         except FileNotFoundError:
-            with open("data.json","w") as data_file:
-                json.dump(new_data,data_file,indent=4)
+            with open("data.json", "w") as data_file:
+                json.dump(new_data, data_file, indent=4)
         else:
-            #Updating old data with new
+            # Updating old data with new
             data.update(new_data)
 
             with open("data.json", "w") as data_file:
@@ -61,6 +61,21 @@ def save():
         finally:
             website_entry.delete(0, END)
             password_entry.delete(0, END)
+
+
+# ---------------------------- SEARCH STORED DATA ------------------------------- #
+def search_stored():
+    website = website_entry.get()
+    try:
+        with open("data.json", "r") as data_file:
+            data = json.load(data_file)
+    except FileNotFoundError:
+        messagebox.showwarning("Error", "File not found!")
+    else:
+        if website in data:
+            messagebox.showinfo(website, f"Email: {data[website]['email']}\nPassword: {data[website]['password']}")
+        else:
+            messagebox.showwarning("Not found", "You have not previously entered details for this website")
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -76,15 +91,15 @@ canvas.grid(row=0, column=1, columnspan=2, sticky="EW")
 
 # Labels
 website_label = Label(text="Website:", bg="white")
-website_label.grid(row=1, column=0)
+website_label.grid(row=1, column=0, padx=6, pady=6)
 email_label = Label(text="Email/Username: ", bg="white")
-email_label.grid(row=2, column=0)
+email_label.grid(row=2, column=0, padx=6, pady=6)
 password_label = Label(text="Password ", bg="white")
-password_label.grid(row=3, column=0)
+password_label.grid(row=3, column=0, padx=6, pady=6)
 
 # Entries
 website_entry = Entry()
-website_entry.grid(row=1, column=1, columnspan=2, sticky="EW")
+website_entry.grid(row=1, column=1, sticky="EW")
 website_entry.focus()
 email_entry = Entry()
 email_entry.grid(row=2, column=1, columnspan=2, sticky="EW")
@@ -93,6 +108,8 @@ password_entry = Entry()
 password_entry.grid(row=3, column=1, sticky="EW")
 
 # Buttons
+search_button = Button(text="Search", bg="white", command=search_stored)
+search_button.grid(row=1, column=2, padx=(10, 0), sticky="EW")
 password_button = Button(text="Generate Password", bg="white", command=generate_password)
 password_button.grid(row=3, column=2, sticky="EW", padx=(10, 0))
 add_button = Button(text="Add", bg="white", command=save)
